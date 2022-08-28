@@ -1,0 +1,24 @@
+---
+- name: Setup default wordpress with MySQL for K8s cluster
+  hosts: cluster
+
+  vars:
+    kubeconfig: "/home/andrik/Desktop/tset-test/k3s.yaml"
+    src:
+      - "/home/andrik/Desktop/tset-test/k8s/namespaces.yaml"
+      - "/home/andrik/Desktop/tset-test/k8s/secret.yaml"
+      - "/home/andrik/Desktop/tset-test/k8s/wordpress-deployment.yaml"
+      - "/home/andrik/Desktop/tset-test/k8s/rbac.yaml"
+      - "/home/andrik/Desktop/tset-test/k8s/mysql-deployment.yaml"
+
+  tasks:
+
+  - name: Create required resources from manifest files
+    kubernetes.core.k8s:
+      kubeconfig: "{{ kubeconfig }}"
+      state: present
+      src: "{{ item }}"
+      validate:
+        fail_on_error: no
+        strict: yes
+    loop: "{{ src }}" 
